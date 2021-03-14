@@ -44,11 +44,9 @@ for n in range(0, len(stk_codes), batch):
     print('Processing 第 {} 批 【{}~{}/{}】...'.format(num, n, n+batch, len(stk_codes)))
     sub_codes = stk_codes[n: n+batch]
     symbol_list = ' '.join(sub_codes)
-    # data = yf.download(symbol_list, start=date.get_year_ago(), end=date.get_end_day(),
-    #                    group_by="ticker", threads=True, auto_adjust=True,
-    #                    interval='1d')
-    data = us.download(symbol_list=symbol_list, start=date.get_9month_ago(), end=date.get_end_day(),
-                        interval='1d')
+    data = yf.download(symbol_list, start=date.get_year_ago(), end=date.get_end_day(),
+                       group_by="ticker", threads=True, auto_adjust=True,
+                       interval='1d')
     for i in sub_codes:
         if i in data.columns:
             stock = stk_info.loc[i]

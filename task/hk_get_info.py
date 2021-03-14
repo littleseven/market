@@ -27,7 +27,7 @@ mydb.truncate_table(info_table)
 
 # 更新 标普500 权重股
 hk_columns = ['code', 'name', 'sector', 'weight']
-symbols = pds.read_excel(path + './data/hk380.xls', sheet_name='Sheet2', encoding='utf8')
+symbols = pds.read_excel(path + './data/hk380.xls', sheet_name='Sheet1', encoding='utf8')
 
 if symbols is not None:
     columns = ['code', 'name', 'sector', 'is_hs', 'hs_weight']

@@ -46,8 +46,6 @@ for n in range(0, len(stk_codes), batch):
     data = yf.download(symbol_list, start=date.get_9month_ago(), end=date.get_end_day(),
                        group_by="ticker", threads=True, auto_adjust=True,
                        interval='1d')
-    # data = us.download(symbol_list=symbol_list, start=date.get_9month_ago(), end=date.get_end_day(),
-    #                     interval='1d')
     for i in sub_codes:
         if i in data.columns:
             stock = stk_info.loc[i]
@@ -88,4 +86,4 @@ print('Download Data use {}'.format(end - start))
 # US 股市场宽度
 df = mydb.read_from_sql('SELECT * FROM hk_stocks_sector_d ORDER BY date desc;')
 mb_name = path + './data/Market-Breadth-HK.jpg'
-analysis.market_breadth(df, mb_name)
+analysis.market_breadth(df, mb_name, True)
