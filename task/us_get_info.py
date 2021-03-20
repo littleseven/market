@@ -18,6 +18,7 @@ def us_total_cap(x):
     else:
         return None
 
+
 start = datetime.now()
 
 info_table = 'us_stocks_info'
@@ -41,6 +42,7 @@ if symbols is not None:
                    inplace=True)
     symbols = symbols[columns].set_index(['code']).drop_duplicates().reset_index()
     symbols.total_cap = symbols.total_cap.map(us_total_cap)
+    # symbols.replace(['BRK.B', 'BF.B'], ['BRK-B', 'BF-B'], True)
     mydb.upsert_table(info_table, columns, symbols)
 
 end = datetime.now()

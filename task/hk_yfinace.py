@@ -16,7 +16,7 @@ msft.splits
 msft.financials
 msft.quarterly_financials
 
-msft = yf.Ticker("MSFT")
+msft = yf.Ticker("BRK-B")
 # get stock info
 msft.info
 # get historical market data

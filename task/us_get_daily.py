@@ -9,6 +9,14 @@ sys.path.append(path)
 from tools.util import *
 from tools.mydb import *
 
+
+def us_code(x):
+    if isinstance(x, str) and x.endswith('.B'):
+        return x.replace('.B', '-B')
+    else:
+        return x
+
+
 list_sql = '''
             select * from us_stocks_info
             where total_cap > 10 or is_spx = 'Y' or is_ndx = 'Y' or is_dji = 'Y';
@@ -16,6 +24,7 @@ list_sql = '''
 
 start = datetime.now()
 stk_info = mydb.read_from_sql(list_sql)
+stk_info.code = stk_info.code.map(us_code)
 stk_codes = stk_info.code.copy()
 stk_info = stk_info.set_index(['code'])
 
@@ -59,7 +68,7 @@ for n in range(0, len(stk_codes), batch):
                                'Close': 'close', 'Volume': 'vol'},
                       inplace=True)
             df = df[~np.isnan(df['close'])]
-            df['code'] = i
+            df['code'] = i.replace('-B', '.B') if i.endswith('-B') else i
             df = analysis.stock_analysis(df, 20, 60, 120)
             if df is None:
                 continue
