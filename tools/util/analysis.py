@@ -184,11 +184,18 @@ def market_breadth(data, file, hk=False):
     options = {'encoding': "UTF-8", 'width': 640 if hk else 600}
     data = data.set_index('date')
     data = data.astype(int)
+    text = dict(selector="th", props=[('text-align', 'center'), ('color', 'green')])
+    index = dict(selector="th", props=[('text-align', 'center')])
+    print([text, index])
 
     html = data.style\
+        .set_properties(**{'text-align': 'center'})\
+        .set_table_styles([text])\
+        .set_table_styles({'MAT': [dict(selector='td', props=[('color', 'green')])]})\
         .apply(_background_gradient, cmap=cm, m=0, M=100)\
-        .apply(_background_gradient, cmap=cm, m=0, M= 1200 if hk else 1100, subset='TOTAL')\
+        .apply(_background_gradient, cmap=cm, m=0, M=1200 if hk else 1100, subset='TOTAL')\
         .render(width=900 if hk else 800)
+    # print(html.split('\n')[:10])
     imgkit.from_string(html, file, options=options)
 
 
