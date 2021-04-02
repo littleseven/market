@@ -9,6 +9,7 @@ sys.path.append(path)
 from tools.util import *
 from tools.mydb import *
 
+
 def market_breadth():
     df = mydb.read_from_sql('SELECT * FROM hsc_stocks_sector_d ORDER BY date desc;')
     mb_name = path + './data/Market-Breadth-HSC-' + str(datetime.today().date()) + '.jpg'
