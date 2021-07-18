@@ -25,8 +25,13 @@ def get_proxies():
 
 def get_spx():
     url = 'http://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
-    request = requests.get(url, headers=headers)
-    soup = bs.BeautifulSoup(request.text, 'lxml')
+    # request = requests.get(url, headers=headers)
+    with open("/Users/guoshuai/PycharmProjects/market/data/sp500.txt", "r") as f:  # 打开文件
+        data = f.read()  # 读取文件
+        print(data)
+
+    soup = bs.BeautifulSoup(data, 'lxml')
+    # soup = bs.BeautifulSoup(request.text, 'lxml')
     table = soup.find('table', {'class': 'wikitable sortable'})
 
     symbol_list = []

@@ -177,11 +177,11 @@ def _background_gradient(s, m, M, cmap='PuBu', low=0, high=0):
     return ['background-color: %s' % color for color in c]
 
 
-def market_breadth(data, file, market='us'):
+def market_breadth(data, file, market='us', title=None):
     if data is None or data.empty:
         return None
     cm = sns.diverging_palette(10, 130, as_cmap=True)
-    options = {'encoding': "UTF-8", 'width': 640 if market != 'us' else 600}
+    options = {'encoding': "UTF-8", 'width': 600}
     data = data.set_index('date')
     data = data.drop(data[data.isnull().T.any()].index)
     data = data.astype(int)
@@ -189,21 +189,25 @@ def market_breadth(data, file, market='us'):
     index = dict(selector="th", props=[('text-align', 'center')])
     print([text, index])
 
-    if market == 'hk':
+    if title is not None:
+        caption = title
+    elif market == 'hk':
         caption = '港股市场宽度'
     elif market == 'hsc':
         caption = '沪深港通市场宽度'
-    else:
+    elif market == 'us':
         caption = '美股市场宽度'
+    else:
+        caption = '市场宽度'
 
     html = data.style \
         .apply(_background_gradient, cmap=cm, m=0, M=100)\
-        .apply(_background_gradient, cmap=cm, m=0, M=1200 if market != 'us' else 1100, subset='TOTAL') \
+        .apply(_background_gradient, cmap=cm, m=0, M=800, subset='SUM') \
         .set_properties(**{'text-align': 'center'}) \
         .set_caption(caption) \
         .set_table_styles([text]) \
         .set_table_styles({'date': [dict(selector='td', props=[('color', 'green')])]}) \
-        .render(width=900 if market != 'us' else 800)
+        .render(width=800)
     # print(html.split('\n'))
     imgkit.from_string(html, file, options=options)
     print(html.split('\n')[0:10])
