@@ -181,7 +181,7 @@ def market_breadth(data, file, market='us', title=None):
     if data is None or data.empty:
         return None
     cm = sns.diverging_palette(10, 130, as_cmap=True)
-    options = {'encoding': "UTF-8", 'width': 600}
+    options = {'encoding': "UTF-8", 'width': 580}
     data = data.set_index('date')
     data = data.drop(data[data.isnull().T.any()].index)
     data = data.astype(int)
@@ -202,7 +202,7 @@ def market_breadth(data, file, market='us', title=None):
 
     html = data.style \
         .apply(_background_gradient, cmap=cm, m=0, M=100)\
-        .apply(_background_gradient, cmap=cm, m=0, M=800, subset='SUM') \
+        .apply(_background_gradient, cmap=cm, m=0, M=1100, subset='SUM') \
         .set_properties(**{'text-align': 'center'}) \
         .set_caption(caption) \
         .set_table_styles([text]) \
