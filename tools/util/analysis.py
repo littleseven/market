@@ -197,6 +197,8 @@ def market_breadth(data, file, market='us', title=None):
         caption = '沪深港通市场宽度'
     elif market == 'us':
         caption = '美股市场宽度'
+    elif market == 'cn':
+        caption = 'A股通300市场宽度'
     else:
         caption = '市场宽度'
 
