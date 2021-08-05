@@ -14,6 +14,8 @@ def market_breadth():
     df = mydb.read_from_sql('SELECT * FROM us_stocks_sector_d ORDER BY date desc;')
     mb_name = path + './data/Market-Breadth-US-' + str(datetime.today().date()) + '.jpg'
     analysis.market_breadth(df, mb_name)
+    mb_name = path + './data/Market-Breadth-US-' + str(datetime.today().date()) + '-W.jpg'
+    analysis.market_breadth_wide(df, mb_name)
 
 
 if __name__ == '__main__':

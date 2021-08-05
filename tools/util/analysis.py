@@ -3,6 +3,7 @@
 import talib as ta
 import numpy as np
 import pandas as pd
+import dataframe as df
 from matplotlib import pyplot as plt
 from matplotlib import colors
 import seaborn as sns
@@ -177,17 +178,28 @@ def _background_gradient(s, m, M, cmap='PuBu', low=0, high=0):
     return ['background-color: %s' % color for color in c]
 
 
+def _border_blank(data):
+    return pd.Series('border-left: thick solid white', index=data.index)
+
+
 def market_breadth(data, file, market='us', title=None):
     if data is None or data.empty:
         return None
     cm = sns.diverging_palette(10, 130, as_cmap=True)
-    options = {'encoding': "UTF-8", 'width': 580}
+    options = {'encoding': "UTF-8", 'width': 590}
     data = data.set_index('date')
     data = data.drop(data[data.isnull().T.any()].index)
     data = data.astype(int)
-    text = dict(selector="th", props=[('text-align', 'center'), ('color', 'green')])
-    index = dict(selector="th", props=[('text-align', 'center')])
-    print([text, index])
+    text = dict(selector="th", props=[('text-align', 'center'),
+                                      ('font-weight', 'bold'),
+                                      ('font-size', '15px'),
+                                      ('color', 'black'),
+                                      ('border-right', 'thick solid white'),
+                                      ])
+    table = dict(selector="", props=[('border-spacing', '0px'),
+                                     ('border-collapse', 'collapse')
+                                     ])
+    print([text, table])
 
     if title is not None:
         caption = title
@@ -205,14 +217,69 @@ def market_breadth(data, file, market='us', title=None):
     html = data.style \
         .apply(_background_gradient, cmap=cm, m=0, M=100)\
         .apply(_background_gradient, cmap=cm, m=0, M=1100, subset='SUM') \
+        .apply(_border_blank, subset='SUM') \
         .set_properties(**{'text-align': 'center'}) \
         .set_caption(caption) \
-        .set_table_styles([text]) \
-        .set_table_styles({'date': [dict(selector='td', props=[('color', 'green')])]}) \
+        .set_table_styles([text, table]) \
         .render(width=800)
     # print(html.split('\n'))
     imgkit.from_string(html, file, options=options)
     print(html.split('\n')[0:10])
+
+
+def market_breadth_wide(data, file, market='us', title=None):
+    if data is None or data.empty:
+        return None
+    cm = sns.diverging_palette(10, 130, as_cmap=True)
+    options = {'encoding': "UTF-8", 'width': 1000}
+    data = data.set_index('date')
+    data = data.drop(data[data.isnull().T.any()].index)
+    data = data.astype(int)
+    head = dict(selector="th", props=[('text-align', 'center'),
+                                      ('color', 'black'),
+                                      ('font-weight', 'bold'),
+                                      ('font-size', '1px'),
+                                      ('border', '0px solid green'),
+                                      ('margin', '0px')
+                                      ])
+    text = dict(selector="td", props=[('text-align', 'center'),
+                                      ('color', 'black'),
+                                      ('font-size', '0px'),
+                                      ('font-weight', 'normal'),
+                                      ('border', '0px solid blue'),
+                                      ('margin', '0px')
+                                      ])
+    index = dict(selector="caption", props=[('caption-side', 'bottom'),
+                                            ('font-size', '1.25em')
+                                            ])
+    table = dict(selector="", props=[('border-spacing', '1px'),
+                                     ('border-collapse', 'collapse')
+                                            ])
+    print([text, index])
+
+    data = data.sort_values(by='date', ascending=True)
+    # data = data.reset_index(drop=True)
+
+    pd.set_option('display.unicode.ambiguous_as_wide', True)
+    pd.set_option('display.unicode.east_asian_width', True)
+
+    # .hide_index()
+    data.reset_index()
+    # date = data['date']
+    # data = data.drop('date', axis=1)
+    # data.insert(12, 'date', date)
+    data = data.T
+    html = data.style \
+        .apply(_background_gradient, cmap=cm, m=0, M=100) \
+        .apply(_background_gradient, cmap=cm, m=0, M=1100, subset=pd.IndexSlice['SUM', :]) \
+        .set_properties(**{'width': '50px', 'height': '8px', 'font-size': '10px'}) \
+        .set_table_styles([table, head, text, index]) \
+        .render(width=1000)
+    # print(html.split('\n')[0:100])
+    f = open(file + '.html', 'w')
+    f.write(html)
+    f.close()
+    imgkit.from_string(html, file, options=options)
 
 
 def recommend(data, index_columns, file):

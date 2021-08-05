@@ -55,10 +55,13 @@ def fix_acode(x):
         return None
 
 
-def get_code(c):
+def get_code(c, a, h):
     if c is not None:
         return c
-    return None
+    elif h is not None:
+        return h
+    elif a is not None:
+        return a
 
 
 def get_sector(sector):
@@ -108,7 +111,7 @@ def is_hs(x):
 
 start = datetime.now()
 
-info_table = 'cn_stocks_info'
+info_table = 'hsc_stocks_info'
 columns = ['code', 'name', 'sector', 'industry', 'is_hs', 'sp_sector']
 
 sql = ''' SELECT `{}` FROM `{}` WHERE sector != '' AND sector is not null;''' \
@@ -117,7 +120,7 @@ data = mydb.read_from_sql(sql)
 
 # 更新 标普500 权重股
 hk_columns = ['code', 'name']
-symbols = pds.read_excel(path + './data/hsc500c.xls', sheet_name='Sheet5', encoding='utf8')
+symbols = pds.read_excel(path + './data/hsc500c.xls', sheet_name='hsci500', encoding='utf8')
 # 'acode', 'hcode'
 if symbols is not None:
     symbols.rename(columns={'code': 'code', 'name': 'name', 'sector': 'sector', 'industry': 'industry'},
@@ -126,10 +129,10 @@ if symbols is not None:
     # symbols['sector'] = ''
     # symbols['industry'] = ''
     # symbols['sp_sector'] = ''
-    # symbols.hcode = symbols.hcode.map(fix_code)
-    symbols.code = symbols.code.map(fix_acode)
-    # symbols.acode = symbols.acode.map(fix_acode)
-    symbols.code = symbols.apply(lambda row: get_code(row['code']), axis=1)
+    symbols.hcode = symbols.hcode.map(fix_code)
+    symbols.code = symbols.code.map(fix_code)
+    symbols.acode = symbols.acode.map(fix_acode)
+    symbols.code = symbols.apply(lambda row: get_code(row['code'], row['acode'], row['hcode']), axis=1)
     symbols['is_hs'] = symbols.code.map(is_hs)
     symbols['is_ss'] = symbols.code.map(is_ss)
     symbols['is_sz'] = symbols.code.map(is_sz)
