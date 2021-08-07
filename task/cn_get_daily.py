@@ -54,7 +54,6 @@ def get_daily():
                 df = data[i]
                 if df is None:
                     continue
-                df = df.tail(250)
                 df = df.reset_index()
                 df.rename(columns={'Date': 'date', 'Open': 'open', 'High': 'high', 'Low': 'low',
                                    'Close': 'close', 'Volume': 'vol'},
